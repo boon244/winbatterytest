@@ -1,3 +1,8 @@
+$logpath = $($env:public) + "\" + $($MyInvocation.MyCommand.Name) + ".log"
+
+start-transcript $logpath
+
+#disable standby
 &powercfg.exe -x -monitor-timeout-ac 0
 &powercfg.exe -x -monitor-timeout-dc 0
 &powercfg.exe -x -disk-timeout-ac 0
@@ -7,6 +12,8 @@
 &powercfg.exe -x -hibernate-timeout-ac 0
 &powercfg.exe -x -hibernate-timeout-dc 0
 
+$batteryInt = (Get-WmiObject win32_battery | Select-Object -ExpandProperty EstimatedChargeRemaining)
+write-host Battery : $($batteryInt)
 #run edge
 function run-edge {
 	$defaultEdgePath = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
@@ -33,9 +40,13 @@ function run-edge {
 		}
 }
 	
-	while ($a -le $b) {
+	while ($batteryInt -ge 5) {
 		run-edge
-		Start-Sleep -Seconds 10
+		Start-Sleep -Seconds 20
+		$batteryInt = (Get-WmiObject win32_battery | Select-Object -ExpandProperty EstimatedChargeRemaining)
+		write-host "Time $(Get-Date -Format "dd/MM/yyyy HH:mm") | Battery: $(Get-WmiObject win32_battery | Select-Object -ExpandProperty EstimatedChargeRemaining)"
 		Get-Process "msedge" | Stop-Process
 		}
-	
+
+end-transcript
+
