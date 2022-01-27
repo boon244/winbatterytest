@@ -12,6 +12,9 @@ start-transcript $logpath
 &powercfg.exe -x -hibernate-timeout-ac 0
 &powercfg.exe -x -hibernate-timeout-dc 0
 
+#enable praesentation 
+Start-Process cmd -ArgumentList "/c PresentationSettings /start" -NoNewWindow
+
 $batteryInt = (Get-WmiObject win32_battery | Select-Object -ExpandProperty EstimatedChargeRemaining)
 write-host Battery : $($batteryInt)
 #run edge
