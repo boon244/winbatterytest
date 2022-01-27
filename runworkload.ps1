@@ -15,6 +15,14 @@ start-transcript $logpath
 #enable praesentation 
 Start-Process cmd -ArgumentList "/c PresentationSettings /start" -NoNewWindow
 
+#set display brightness
+try {
+	(Get-WmiObject -Namespace root/WMI -Class WmiMonitorBrightnessMethods).WmiSetBrightness(1, 50)
+}
+catch {
+	write-host "Cant set display brightness"
+}
+
 $batteryInt = (Get-WmiObject win32_battery | Select-Object -ExpandProperty EstimatedChargeRemaining)
 write-host Battery : $($batteryInt)
 #run edge
